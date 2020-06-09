@@ -23,8 +23,9 @@ class ParkirController extends Controller
 
     public function getbiaya(Request $request)
     {
-        $waktu_masuk = date('H', strtotime($request->waktu_masuk));
-        $waktu_keluar = date('H', strtotime($request->waktu_keluar));
+        $waktu_masuk = strtotime($request->waktu_masuk);
+        $waktu_keluar = strtotime($request->waktu_keluar);
+
         if ($request->jenis_kendaraan == 'Motor') {
             $first = 2000;
             $next = 500;
@@ -34,13 +35,20 @@ class ParkirController extends Controller
         }
 
         $totalWaktu = (intval($waktu_keluar)) - (intval($waktu_masuk));
+        $jamselisih    = floor($totalWaktu / (60 * 60));
+        $menit    = $totalWaktu - $jamselisih * (60 * 60);
+        $menitselisih = floor($menit / 60);
 
-        if ($totalWaktu == 0) {
+        $getDetik_jamselisih = ($jamselisih * (60 * 60));
+        $getDetik_menitselisih = ($menitselisih * 60);
+        $waktuparkir = ($getDetik_jamselisih + $getDetik_menitselisih);
+
+        if ($waktuparkir <= 3600) {
             $biaya = $first;
-        } else if ($totalWaktu > 0) {
-            $waktu = $totalWaktu - 1;
-            $biayaNext = $waktu * $next;
-            $biaya = $first + $biayaNext;
+        } elseif ($waktuparkir > 3600) {
+            $jam = ceil($waktuparkir / (60 * 60));
+            $nexts = $next * ($jam - 1);
+            $biaya = $first + $nexts;
         } else {
             $biaya = 0;
         }
@@ -50,8 +58,10 @@ class ParkirController extends Controller
 
     public function ViewTransaksi(Request $request)
     {
-        $waktu_masuk = date('H', strtotime($request->waktu_masuk));
-        $waktu_keluar = date('H', strtotime($request->waktu_keluar));
+
+        $waktu_masuk = strtotime($request->waktu_masuk);
+        $waktu_keluar = strtotime($request->waktu_keluar);
+
         if ($request->jenis_kendaraan == 'Motor') {
             $first = 2000;
             $next = 500;
@@ -61,13 +71,20 @@ class ParkirController extends Controller
         }
 
         $totalWaktu = (intval($waktu_keluar)) - (intval($waktu_masuk));
+        $jamselisih    = floor($totalWaktu / (60 * 60));
+        $menit    = $totalWaktu - $jamselisih * (60 * 60);
+        $menitselisih = floor($menit / 60);
 
-        if ($totalWaktu == 0) {
+        $getDetik_jamselisih = ($jamselisih * (60 * 60));
+        $getDetik_menitselisih = ($menitselisih * 60);
+        $waktuparkir = ($getDetik_jamselisih + $getDetik_menitselisih);
+
+        if ($waktuparkir <= 3600) {
             $biaya = $first;
-        } else if ($totalWaktu > 0) {
-            $waktu = $totalWaktu - 1;
-            $biayaNext = $waktu * $next;
-            $biaya = $first + $biayaNext;
+        } elseif ($waktuparkir > 3600) {
+            $jam = ceil($waktuparkir / (60 * 60));
+            $nexts = $next * ($jam - 1);
+            $biaya = $first + $nexts;
         } else {
             $biaya = 0;
         }
